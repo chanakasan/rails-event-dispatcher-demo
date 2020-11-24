@@ -1,13 +1,16 @@
 class TodosController < ApplicationController
   before_action :set_todo, only: [:show, :update, :destroy]
 
+  include Injector
+  use_deps :todos_create_success_event
+
   # GET /todos
   def index
     name = Faker::Company.bs
     Todo.create!(name: name)
-    TodosMailer.new_todo(name).deliver_later
+    todos_create_success_event({ name: name })
 
-    @todos = Todo.all
+    @todos = Todo.all.order(id: :desc)
     render json: @todos
   end
 
