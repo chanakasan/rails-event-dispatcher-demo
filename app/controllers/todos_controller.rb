@@ -3,8 +3,11 @@ class TodosController < ApplicationController
 
   # GET /todos
   def index
-    @todos = Todo.all
+    name = Faker::Company.bs
+    Todo.create!(name: name)
+    TodosMailer.new_todo(name).deliver_later
 
+    @todos = Todo.all
     render json: @todos
   end
 
